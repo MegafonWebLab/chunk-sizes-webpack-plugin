@@ -1,0 +1,26 @@
+{
+  "name": "chunk-sizes-webpack-plugin",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": ["lib"],
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "example:build": "webpack --config example/webpack.config.js"
+  },
+  "peerDependencies": {
+    "webpack": "^5.0.0"
+  },
+  "dependencies": {
+    "schema-utils": "^3.1.1"
+  },
+  "devDependencies": {
+    "css-loader": "^6.2.0",
+    "mini-css-extract-plugin": "^2.2.2",
+    "webpack": "^5.51.1",
+    "webpack-cli": "^4.8.0",
+    "typescript": "^4.4.3"
+  }
+}
