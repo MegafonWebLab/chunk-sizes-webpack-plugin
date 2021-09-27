@@ -30,15 +30,15 @@ module.exports = [
 
 All parameters are optional.
 
-| option         | type                     | default                       | description                                                                                                                           |
-|----------------|--------------------------|-------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
-| outputFilename | `string`                 | `chunk_sizes.txt`             | Report file name.                                                                                                                     |
-| outputFolder   | `string`                 | Webpack's config output.path. | Report destination folder.                                                                                                            |
-| overwrite      | `boolean`                | `true`                        | Overwrite file on report generation.                                                                                                  |
+| option         | type                     | default                       | description                                                                                                                               |
+|----------------|--------------------------|-------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| outputFilename | `string`                 | `chunk_sizes.txt`             | Report file name.                                                                                                                         |
+| outputFolder   | `string`                 | Webpack's config output.path. | Report destination folder.                                                                                                                |
+| overwrite      | `boolean`                | `true`                        | Overwrite file on report generation.                                                                                                      |
 | customLabels   | `Record<string, string>` | `{}`                          | Additional custom labels in format: { labelName1: value1, labelName2: value2 }. <br>Values will be appended in every entry's labels list. |
-| metricName     | `string`                 | `chunk_size_<unit name>`      | Metric custom name. <br>Default example: for unit = `kb` metric name will be `chunk_size_kilobytes`.                                        |
-| chunkLabelName | `string`                 | `chunk`                       | Chunk label name.                                                                                                                     |
-| unit           | `mb`, `kb`, `B`, `bit`   | `kb`                          | Units for metric output. Supported values: <br>- `mb` (megabytes) <br>- `kb` (kilobytes) <br>- `B` (bytes) <br>- `bit` (bits)                       |
+| metricName     | `string`                 | `chunk_size_<unit name>`      | Metric custom name. <br>Default example: for unit = `kb` metric name will be `chunk_size_kilobytes`.                                      |
+| chunkLabelName | `string`                 | `chunk`                       | Chunk label name.                                                                                                                         |
+| unit           | `mb`, `kb`, `B`          | `kb`                          | Units for metric output. Supported values: <br>- `mb` (megabytes) <br>- `kb` (kilobytes) <br>- `B` (bytes)                                |
 
 
 ### Chunks labels

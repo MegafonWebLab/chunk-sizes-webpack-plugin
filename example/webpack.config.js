@@ -21,7 +21,7 @@ module.exports = [
                 customLabels: {
                     customLabel: 'custom-value',
                 },
-                unit: 'bit',
+                unit: 'B',
             }),
         ],
     }, {

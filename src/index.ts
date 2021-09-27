@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { validate } from 'schema-utils';
-import { Compiler, Stats, Chunk, AssetInfo } from 'webpack';
+import { Compiler, Stats, Chunk, AssetInfo, Compilation } from 'webpack';
 import { Schema } from 'schema-utils/declarations/validate';
 
 const schema: Schema = {
@@ -27,7 +27,7 @@ const schema: Schema = {
         },
         unit: {
             type: 'string',
-            enum: ['mb', 'kb', 'B', 'bit'],
+            enum: ['mb', 'kb', 'B'],
         },
     },
 };
@@ -76,16 +76,15 @@ type ChunkSizesWebpackPluginOptions = {
      * - `mb` (megabytes)
      * - `kb` (kilobytes)
      * - `B` (bytes)
-     * - `bit` (bits)
      *
      * By default: `kb`.
      */
-    unit: 'mb' | 'kb' | 'B' | 'bit';
+    unit: 'mb' | 'kb' | 'B';
 }
 
 type ChunkSize = {
     name: string;
-    size: number;
+    sizeInBytes: number;
 }
 
 export class ChunkSizesWebpackPlugin {
@@ -112,19 +111,33 @@ export class ChunkSizesWebpackPlugin {
         this.options = mergedOptions;
     }
 
-    getChunksSizes(chunks: Set<Chunk>, assetsInfo: Map<string, AssetInfo>): ChunkSize[] {
+    getChunksSizes(chunks: Set<Chunk>, assetsInfo?: Map<string, AssetInfo>, assets?: Compilation['assets']): ChunkSize[] {
         return Array.from(chunks).reduce((accumulator: ChunkSize[], { id, name, files }) => {
             const chunkName = name || String(id);
-            const chunkSizesSummary = Array.from(files).reduce((sum, fileName) => sum + (assetsInfo.get(fileName)?.size || 0), 0);
+            const chunkSizesSummary = Array.from(files).reduce((sum, fileName) => {
+                let fileSize = 0;
+
+                // webpack 5
+                if (assetsInfo?.get(fileName)?.size) {
+                    fileSize = assetsInfo.get(fileName)?.size || 0;
+                }
+
+                // webpack 4
+                if (assets?.[fileName]?.size?.()) {
+                    fileSize = assets?.[fileName]?.size?.();
+                }
+
+                return sum + fileSize;
+            }, 0);
 
             accumulator.push({
                 name: chunkName,
-                size: chunkSizesSummary,
+                sizeInBytes: chunkSizesSummary,
             });
 
             return accumulator;
         }, [])
-        .sort((c1: ChunkSize, c2: ChunkSize) => c2.size - c1.size);
+        .sort((c1: ChunkSize, c2: ChunkSize) => c2.sizeInBytes - c1.sizeInBytes);
     }
 
     getMetricName() {
@@ -140,30 +153,24 @@ export class ChunkSizesWebpackPlugin {
             case 'kb': {
                 return `${prefix}kilobytes`;
             }
+            default:
             case 'B': {
                 return `${prefix}bytes`;
-            }
-            default:
-            case 'bit': {
-                return `${prefix}bits`;
             }
         }
     }
 
-    getSizeInUnit(size: number) {
+    getSizeInUnit(sizeInBytes: number) {
         switch(this.options.unit) {
             case 'mb': {
-                return (size / (1024 * 1024 * 8)).toFixed(2);
+                return (sizeInBytes / (1024 * 1024)).toFixed(2);
             }
             case 'kb': {
-                return (size / (1024 * 8)).toFixed(2);
-            }
-            case 'B': {
-                return (size / (8)).toFixed(2);
+                return (sizeInBytes / 1024).toFixed(2);
             }
             default:
-            case 'bit': {
-                return size;
+            case 'B': {
+                return sizeInBytes;
             }
         }
     }
@@ -174,7 +181,7 @@ export class ChunkSizesWebpackPlugin {
         const customLabels = Object.entries(this.options.customLabels).map(([ label, value ]) => `${label}="${value}"`).join(',');
 
         return chunkSizes.reduce((acc, cur) => {
-            const sizeInUnit = this.getSizeInUnit(cur.size);
+            const sizeInUnit = this.getSizeInUnit(cur.sizeInBytes);
             const labels = `${!customLabels ? '' : `${customLabels},`}${chunkLabelName}="${cur.name}"`;
 
             return `${acc}${metricName}{${labels}} ${sizeInUnit}\n`;
@@ -185,9 +192,9 @@ export class ChunkSizesWebpackPlugin {
         const pluginName = ChunkSizesWebpackPlugin.name;
 
         compiler.hooks.done.tapAsync(pluginName, async (stats: Stats, callback) => {
-                const { compilation: { chunks, assetsInfo } } = stats;
+                const { compilation: { chunks, assetsInfo, assets } } = stats;
 
-                const chunkSizes = this.getChunksSizes(chunks, assetsInfo);
+                const chunkSizes = this.getChunksSizes(chunks, assetsInfo, assets);
                 const converted = this.convertToOpenMetrics(chunkSizes);
 
                 const outputFolder = this.options.outputFolder || stats.compilation.options.output.path || './';
@@ -208,3 +215,4 @@ export class ChunkSizesWebpackPlugin {
         );
     }
 }
+
