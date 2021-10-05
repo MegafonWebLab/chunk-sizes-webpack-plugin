@@ -20,6 +20,7 @@ module.exports = [
                 overwrite: false,
                 customLabels: {
                     customLabel: 'custom-value',
+                    bundle: 'mainPageBundle',
                 },
                 unit: 'B',
             }),
@@ -54,6 +55,9 @@ module.exports = [
                 outputFilename: METRICS_FILE_NAME,
                 metricName: 'custom_metric_name',
                 overwrite: false,
+                customLabels: {
+                    bundle: 'someOtherPageBundle',
+                },
             }),
             new MiniCssExtractPlugin(),
         ],

@@ -153,8 +153,7 @@ export class ChunkSizesWebpackPlugin {
             case 'kb': {
                 return `${prefix}kilobytes`;
             }
-            default:
-            case 'B': {
+            default: {
                 return `${prefix}bytes`;
             }
         }
@@ -168,8 +167,7 @@ export class ChunkSizesWebpackPlugin {
             case 'kb': {
                 return (sizeInBytes / 1024).toFixed(2);
             }
-            default:
-            case 'B': {
+            default: {
                 return sizeInBytes;
             }
         }

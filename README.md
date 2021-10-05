@@ -1,20 +1,21 @@
 # ChunkSizesWebpackPlugin
 
-Webpack plugin for collecting and reporting chunks sizes in OpenMetrics format.
+Webpack plugin for collecting and reporting chunks sizes in OpenMetrics format. Applicable for 
+[gitlab metrics feature](https://docs.gitlab.com/ee/ci/metrics_reports.html). 
+
+Plugin supports webpack 4 and webpack 5.
 
 ## Usage
 
 ### Installation
 
-```
-yarn add -D chunk-sizes-webpack-plugin
+```shell
+$ yarn add -D chunk-sizes-webpack-plugin
 ```
 
 ### Webpack configuration
 
-Webpack config:
-
-```
+```js
 const { ChunkSizesWebpackPlugin } = require('chunk-sizes-webpack-plugin');
 
 module.exports = [
@@ -24,6 +25,7 @@ module.exports = [
             new ChunkSizesWebpackPlugin(),
         ],
     }
+];
 ```
 
 ### Plugin options
@@ -55,3 +57,12 @@ Possible solutions:
 
 Plugin will overwrite report file on every run by default. In case of several webpack configurations 
 in one build use `overwrite = false` and remove report file before next build manually.
+
+#### Report file example
+
+```text
+chunk_size_kilobytes{bundle="someOtherPageBundle",chunk="myFavoriteChunk"} 0.08
+chunk_size_kilobytes{customLabel="custom-value",bundle="mainPageBundle",chunk="main"} 2.88
+chunk_size_kilobytes{customLabel="custom-value",bundle="mainPageBundle",chunk="chunkTwo"} 0.09
+chunk_size_kilobytes{customLabel="custom-value",bundle="mainPageBundle",chunk="chunkOne"} 0.09
+```
