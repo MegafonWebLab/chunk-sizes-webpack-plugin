@@ -66,3 +66,7 @@ chunk_size_kilobytes{customLabel="custom-value",bundle="mainPageBundle",chunk="m
 chunk_size_kilobytes{customLabel="custom-value",bundle="mainPageBundle",chunk="chunkTwo"} 0.09
 chunk_size_kilobytes{customLabel="custom-value",bundle="mainPageBundle",chunk="chunkOne"} 0.09
 ```
+
+## Contributing
+
+Follow [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
