@@ -13,7 +13,7 @@
     "build": "tsc --project tsconfig.build.json",
     "typecheck": "tsc",
     "test": "jest",
-    "example:build": "webpack --config example/webpack.config.js",
+    "example:build": "yarn build && webpack --config example/webpack.config.js",
     "pre-commit": "yarn typecheck && yarn test"
   },
   "peerDependencies": {

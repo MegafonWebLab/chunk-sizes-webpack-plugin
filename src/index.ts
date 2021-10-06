@@ -209,7 +209,7 @@ export class ChunkSizesWebpackPlugin {
     }
 
     apply(compiler: Compiler) {
-        compiler.hooks.done.tapAsync(ChunkSizesWebpackPlugin.name, this.tapFunction);
+        compiler.hooks.done.tapAsync(ChunkSizesWebpackPlugin.name, this.tapFunction.bind(this));
     }
 }
 
