@@ -3,6 +3,7 @@
 /node_modules
 /lib
 /example/dist
+/coverage
 
 npm-debug.log
 yarn-debug.log

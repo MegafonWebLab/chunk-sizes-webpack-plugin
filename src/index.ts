@@ -32,7 +32,7 @@ const schema: Schema = {
     },
 };
 
-type ChunkSizesWebpackPluginOptions = {
+export type ChunkSizesWebpackPluginOptions = {
     /**
      * Report file name.
      *
@@ -82,7 +82,7 @@ type ChunkSizesWebpackPluginOptions = {
     unit: 'mb' | 'kb' | 'B';
 }
 
-type ChunkSize = {
+export type ChunkSize = {
     name: string;
     sizeInBytes: number;
 }
@@ -123,7 +123,7 @@ export class ChunkSizesWebpackPlugin {
                 }
 
                 // webpack 4
-                if (assets?.[fileName]?.size?.()) {
+                if (!fileSize && assets?.[fileName]?.size?.()) {
                     fileSize = assets?.[fileName]?.size?.();
                 }
 
@@ -159,7 +159,7 @@ export class ChunkSizesWebpackPlugin {
         }
     }
 
-    getSizeInUnit(sizeInBytes: number) {
+    getSizeInUnit(sizeInBytes: number): string {
         switch(this.options.unit) {
             case 'mb': {
                 return (sizeInBytes / (1024 * 1024)).toFixed(2);
@@ -168,49 +168,48 @@ export class ChunkSizesWebpackPlugin {
                 return (sizeInBytes / 1024).toFixed(2);
             }
             default: {
-                return sizeInBytes;
+                return `${sizeInBytes}`;
             }
         }
     }
 
     convertToOpenMetrics(chunkSizes: ChunkSize[]): string {
         const metricName = this.getMetricName();
-        const { chunkLabelName } = this.options;
-        const customLabels = Object.entries(this.options.customLabels).map(([ label, value ]) => `${label}="${value}"`).join(',');
+        const { chunkLabelName, customLabels } = this.options;
+        const convertedCustomLabels = Object.entries(customLabels).map(([ label, value ]) => `${label}="${value}"`).join(',');
 
         return chunkSizes.reduce((acc, cur) => {
             const sizeInUnit = this.getSizeInUnit(cur.sizeInBytes);
-            const labels = `${!customLabels ? '' : `${customLabels},`}${chunkLabelName}="${cur.name}"`;
+            const labels = `${!convertedCustomLabels ? '' : `${convertedCustomLabels},`}${chunkLabelName}="${cur.name}"`;
 
             return `${acc}${metricName}{${labels}} ${sizeInUnit}\n`;
         }, '');
     }
 
-    apply(compiler: Compiler) {
-        const pluginName = ChunkSizesWebpackPlugin.name;
+    tapFunction(stats: Stats, callback: Function): void {
+        const { compilation: { chunks, assetsInfo, assets } } = stats;
 
-        compiler.hooks.done.tapAsync(pluginName, async (stats: Stats, callback) => {
-                const { compilation: { chunks, assetsInfo, assets } } = stats;
+        const chunkSizes = this.getChunksSizes(chunks, assetsInfo, assets);
+        const converted = this.convertToOpenMetrics(chunkSizes);
 
-                const chunkSizes = this.getChunksSizes(chunks, assetsInfo, assets);
-                const converted = this.convertToOpenMetrics(chunkSizes);
+        const outputFolder = this.options.outputFolder || stats.compilation.options?.output?.path || './';
+        const outputFile = path.join(outputFolder, this.options.outputFilename);
 
-                const outputFolder = this.options.outputFolder || stats.compilation.options.output.path || './';
-                const outputFile = path.join(outputFolder, this.options.outputFilename);
+        const writeFunction = this.options.overwrite ? fs.writeFile : fs.appendFile;
 
-                const writeFunction = this.options.overwrite ? fs.writeFile : fs.appendFile;
-
-                writeFunction(outputFile, converted, err => {
-                    if (err) {
-                        console.error(err);
-                    }
-
-                    console.log('Chunk sizes metrics were written in', outputFile);
-
-                    callback();
-                });
+        writeFunction(outputFile, converted, err => {
+            if (err) {
+                console.error(err);
             }
-        );
+
+            console.log('Chunk sizes metrics were written in', outputFile);
+
+            callback();
+        });
+    }
+
+    apply(compiler: Compiler) {
+        compiler.hooks.done.tapAsync(ChunkSizesWebpackPlugin.name, this.tapFunction);
     }
 }
 
