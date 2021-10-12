@@ -28,7 +28,7 @@ module.exports = [
     }, {
         context: EXAMPLE_DIRECTORY,
         entry: {
-            myFavoriteChunk: './src/index2.js'
+            myFavoriteEntry: './src/index2.js'
         },
         mode: 'production',
         output: {
