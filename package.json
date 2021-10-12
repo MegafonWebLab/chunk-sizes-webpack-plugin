@@ -1,5 +1,6 @@
 {
-  "name": "chunk-sizes-webpack-plugin",
+  "name": "@megafon/chunk-sizes-webpack-plugin",
+  "description": "Webpack plugin for collecting and reporting chunks sizes in OpenMetrics format.",
   "version": "0.0.1",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -7,14 +8,17 @@
     "lib"
   ],
   "license": "MIT",
-  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "prepare": "husky install",
     "build": "tsc --project tsconfig.build.json",
     "typecheck": "tsc",
     "test": "jest",
-    "example:build": "yarn build && webpack --config example/webpack.config.js",
-    "pre-commit": "yarn typecheck && yarn test"
+    "example:build": "yarn build && rm -rf example/dist && webpack --config example/webpack.config.js",
+    "pre-commit": "yarn typecheck && yarn test",
+    "release": "yarn version --message='Release: v%s'"
   },
   "peerDependencies": {
     "webpack": "^4.0.0 || ^5.0.0"
