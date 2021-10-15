@@ -10,13 +10,13 @@ Plugin supports webpack 4 and webpack 5.
 ### Installation
 
 ```shell
-$ yarn add -D chunk-sizes-webpack-plugin
+$ yarn add -D @megafon/chunk-sizes-webpack-plugin
 ```
 
 ### Webpack configuration
 
 ```js
-const { ChunkSizesWebpackPlugin } = require('chunk-sizes-webpack-plugin');
+const { ChunkSizesWebpackPlugin } = require('@megafon/chunk-sizes-webpack-plugin');
 
 module.exports = [
     {
@@ -63,7 +63,7 @@ in one build use `overwrite = false` and remove report file before next build ma
 Demo [configuration](https://github.com/MegafonWebLab/chunk-sizes-webpack-plugin/blob/master/example/webpack.config.js).
 
 Includes two builds:
-1. entry (main) with lazily-loaded modules (chunkOne and chunkTwo)
+1. entry (main) with lazy-loaded modules (chunkOne and chunkTwo)
 2. simple entry (myFavoriteEntry) 
 
 * <b>Note: option `overwrite: false` should be added in every example bellow because of two builds in one config.</b> 
