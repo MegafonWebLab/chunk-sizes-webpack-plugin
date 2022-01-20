@@ -17,8 +17,17 @@
     "typecheck": "tsc",
     "test": "jest",
     "example:build": "yarn build && rm -rf example/dist && webpack --config example/webpack.config.js",
-    "pre-commit": "yarn typecheck && yarn test",
-    "release": "yarn version --message='Release: v%s'"
+    "pre-commit": "yarn typecheck && yarn test"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   },
   "peerDependencies": {
     "webpack": "^4.0.0 || ^5.0.0"
@@ -31,9 +40,13 @@
     "@babel/core": "^7.15.5",
     "@babel/preset-env": "^7.15.6",
     "@babel/preset-typescript": "^7.15.0",
+    "@commitlint/cli": "^16.1.0",
+    "@commitlint/config-conventional": "^16.0.0",
     "@types/jest": "^27.0.2",
     "babel-jest": "^27.2.4",
+    "commitizen": "^4.2.4",
     "css-loader": "^6.2.0",
+    "cz-conventional-changelog": "^3.3.0",
     "husky": "^7.0.2",
     "jest": "^27.2.4",
     "mini-css-extract-plugin": "^2.2.2",

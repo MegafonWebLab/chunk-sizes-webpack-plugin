@@ -1,5 +1,9 @@
 # ChunkSizesWebpackPlugin
 
+[![npm (scoped with tag)](https://img.shields.io/npm/v/@megafon/chunk-sizes-webpack-plugin/latest?label=%40megafon%2Fchunk-sizes-webpack-plugin)](https://www.npmjs.com/package/@megafon/msisdn-formatter/v/latest)
+[![chunks CI](https://github.com/MegafonWebLab/chunk-sizes-webpack-plugin/actions/workflows/release.yaml/badge.svg)](https://github.com/MegafonWebLab/chunk-sizes-webpack-plugin/actions/workflows/release.yaml)
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+
 Webpack plugin for collecting and reporting chunks sizes in OpenMetrics format. Applicable for 
 [gitlab metrics feature](https://docs.gitlab.com/ee/ci/metrics_reports.html). 
 
